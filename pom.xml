@@ -1,0 +1,554 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.gematik.refv</groupId>
+    <artifactId>referencevalidator</artifactId>
+    <packaging>pom</packaging>
+    <version>3.0.0-SNAPSHOT</version>
+    <name>gematik Referenzvalidator</name>
+    <description>The Reference Validator enables advanced validation of FHIR resources that are stored in the Telematics
+        Infrastructure (TI) applications.
+    </description>
+    <url>https://github.com/gematik/app-referencevalidator</url>
+
+    <scm>
+        <url>https://github.com/gematik/app-referencevalidator</url>
+        <connection>scm:git:git://github.com/gematik/app-referencevalidator.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:gematik/app-referencevalidator.git</developerConnection>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/gematik/app-referencevalidator/issues</url>
+    </issueManagement>
+
+    <organization>
+        <name>gematik GmbH</name>
+        <url>https://www.gematik.de</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>gematik</name>
+            <email>referenzvalidator@gematik.de</email>
+            <url>https://gematik.github.io/</url>
+            <organization>gematik GmbH</organization>
+            <organizationUrl>https://www.gematik.de/</organizationUrl>
+        </developer>
+    </developers>
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <!--suppress UnresolvedMavenProperty -->
+            <url>${releaseDeploymentRepository}</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <!--suppress UnresolvedMavenProperty -->
+            <url>${snapshotDeploymentRepository}</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <!-- Default values -->
+        <java.version>25</java.version>
+        <file.encoding>UTF-8</file.encoding>
+        <user.language>en</user.language>
+        <user.country>DE</user.country>
+        <user.variant/>
+        <!-- Enforce Reproducible builds -->
+        <project.build.outputTimestamp>2026-06-01T00:00:00Z</project.build.outputTimestamp>
+
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>${maven.compiler.encoding}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${maven.compiler.encoding}</project.reporting.outputEncoding>
+
+        <maven.artifact.plugin.version>3.6.1</maven.artifact.plugin.version>
+        <maven.assembly.plugin.version>3.8.0</maven.assembly.plugin.version>
+        <maven.build.helper.plugin.version>3.6.2</maven.build.helper.plugin.version>
+        <maven.build.number.plugin.version>3.3.0</maven.build.number.plugin.version>
+        <maven.central.publishing.plugin.version>0.11.0</maven.central.publishing.plugin.version>
+        <maven.compiler.plugin.version>3.16.0</maven.compiler.plugin.version>
+        <maven.dependency.plugin.version>3.11.0</maven.dependency.plugin.version>
+        <maven.deploy.plugin.version>3.2.0</maven.deploy.plugin.version>
+        <maven.enforcer.plugin.version>3.6.3</maven.enforcer.plugin.version>
+        <maven.exec.plugin.version>3.6.4</maven.exec.plugin.version>
+        <maven.failsafe.plugin.version>3.6.0</maven.failsafe.plugin.version>
+        <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
+        <maven.jacoco.plugin.version>0.8.15</maven.jacoco.plugin.version>
+        <maven.jar.plugin.version>3.5.1</maven.jar.plugin.version>
+        <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
+        <maven.license.ospo.plugin.version>1.3.2</maven.license.ospo.plugin.version>
+        <maven.license.plugin.version>2.7.1</maven.license.plugin.version>
+        <maven.release.plugin.version>3.3.1</maven.release.plugin.version>
+        <maven.resources.plugin.version>3.5.0</maven.resources.plugin.version>
+        <maven.site.plugin.version>3.22.0</maven.site.plugin.version>
+        <maven.sonar.plugin.version>5.8.0.7211</maven.sonar.plugin.version>
+        <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
+        <maven.spotless.plugin.version>3.10.3</maven.spotless.plugin.version>
+        <maven.surefire.plugin.version>3.6.0</maven.surefire.plugin.version>
+
+        <!-- defaults for local runs (no limits) -->
+        <jvm.argLine/>
+        <!-- defaults to all -->
+        <packages/>
+
+        <!-- Sonar configuration -->
+        <sonar.language>java</sonar.language>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.exclusions>**/module-info.java,**/package-info.java</sonar.exclusions>
+        <sonar.junit.reportPaths>target/surefire-reports/,target/failsafe-reports/</sonar.junit.reportPaths>
+        <sonar.coverage.jacoco.aggregateXmlReportPaths>
+            ${maven.multiModuleProjectDirectory}/report-aggregate/target/site/jacoco-aggregate/jacoco.xml
+        </sonar.coverage.jacoco.aggregateXmlReportPaths>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven.dependency.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>${maven.spotless.plugin.version}</version>
+                    <configuration>
+                        <java>
+                            <googleJavaFormat/>
+                        </java>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>format</id>
+                            <goals>
+                                <goal>apply</goal>
+                            </goals>
+                            <phase>validate</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugin.version}</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <release>${maven.compiler.release}</release>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>info.picocli</groupId>
+                                <artifactId>picocli-codegen</artifactId>
+                                <version>4.7.7</version>
+                            </path>
+                        </annotationProcessorPaths>
+                        <debug>false</debug>
+                        <showDeprecation>true</showDeprecation>
+                        <showWarnings>true</showWarnings>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>**/*LocalTest.java</exclude>
+                            <exclude>**/*IT.java</exclude>
+                            <exclude>**/*IntegrationTest.java</exclude>
+                        </excludes>
+                        <argLine>@{argLine} ${jvm.argLine}</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven.failsafe.plugin.version}</version>
+                    <configuration>
+                        <argLine>@{argLine} ${jvm.argLine}</argLine>
+                        <includes>
+                            <include>**/*LocalTest.java</include>
+                            <include>**/*IT.java</include>
+                            <include>**/*IntegrationTest.java</include>
+                        </includes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${maven.jacoco.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>default-prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>default-prepare-agent-integration</id>
+                            <goals>
+                                <goal>prepare-agent-integration</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>jacoco-report</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>jacoco-report-integration</id>
+                            <phase>post-integration-test</phase>
+                            <goals>
+                                <goal>report-integration</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <!-- Avoids JaCoCo "Class Too Large" Exception -->
+                        <excludes>
+                            <exclude>org/hl7/fhir/**</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven.enforcer.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-maven</id>
+                            <phase>process-sources</phase>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <banDuplicatePomDependencyVersions/>
+                                    <dependencyConvergence/>
+                                    <requireJavaVersion>
+                                        <version>${maven.compiler.release}</version>
+                                    </requireJavaVersion>
+                                    <requireMavenVersion>
+                                        <version>[3.9,4.0.0)</version>
+                                    </requireMavenVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven.source.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${maven.license.plugin.version}</version>
+                    <configuration>
+                        <dryRun>false</dryRun>
+                        <licenseName>apache_v2_0</licenseName>
+                        <licenseResolver>classpath://copyright-header/apache-license</licenseResolver>
+                        <inceptionYear>2024</inceptionYear>
+                        <organizationName>gematik GmbH</organizationName>
+
+                        <licensesOutputDirectory>${project.parent.relativePath}/third-party-licenses
+                        </licensesOutputDirectory>
+                        <licensesOutputFile>${project.parent.relativePath}/third-party-licenses/licenses.xml
+                        </licensesOutputFile>
+                        <forceDownload>false</forceDownload>
+
+                        <canUpdateCopyright>true</canUpdateCopyright>
+                        <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+
+                        <includes>
+                            <include>**/*.java</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/generated/**</exclude>
+                        </excludes>
+                    </configuration>
+
+                    <dependencies>
+                        <dependency>
+                            <groupId>de.gematik</groupId>
+                            <artifactId>ospo-resources</artifactId>
+                            <version>${maven.license.ospo.plugin.version}</version>
+                        </dependency>
+                    </dependencies>
+
+                    <executions>
+                        <!-- Update der Source-Header -->
+                        <execution>
+                            <id>update-file-header</id>
+                            <phase>process-sources</phase>
+                            <goals>
+                                <goal>update-file-header</goal>
+                            </goals>
+                        </execution>
+
+                        <!-- Check der Source-Header -->
+                        <execution>
+                            <id>check-file-header</id>
+                            <goals>
+                                <goal>check-file-header</goal>
+                            </goals>
+                        </execution>
+
+                        <!-- Download der transitiven Lizenzen -->
+                        <execution>
+                            <id>download-licenses</id>
+                            <goals>
+                                <goal>download-licenses</goal>
+                            </goals>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${maven.exec.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven.javadoc.plugin.version}</version>
+                    <configuration>
+                        <doclint>none</doclint>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven.deploy.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven.release.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven.site.plugin.version}</version>
+                    <configuration>
+                        <locales>en</locales>
+                        <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+                        <outputEncoding>${project.reporting.outputEncoding}</outputEncoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven.assembly.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven.resources.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${maven.build.helper.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven.jar.plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                            <manifestEntries>
+                                <Build-Version>
+                                    ${project.version}
+                                </Build-Version>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <Build-Date>${project.build.outputTimestamp}</Build-Date>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${maven.sonar.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>templating-maven-plugin</artifactId>
+                    <version>3.1.1</version>
+                    <executions>
+                        <execution>
+                            <id>filter-src</id>
+                            <goals>
+                                <goal>filter-sources</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+
+    </build>
+
+    <profiles>
+        <profile>
+            <id>external</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven.gpg.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${maven.central.publishing.plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Opt-in JMH performance benchmarks -->
+        <profile>
+            <id>jmh</id>
+            <modules>
+                <module>performance-benchmarks</module>
+            </modules>
+        </profile>
+
+        <!-- CI‑only profile -->
+        <profile>
+            <id>ci-memory</id>
+            <!-- Activate when the M2_SETTINGS_TYPE environment is defined -->
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>env.M2_SETTINGS_TYPE</name>
+                </property>
+            </activation>
+            <properties>
+                <jvm.argLine>-Xms4g -Xmx6g -Dgwt.extraJvmArgs=-Xmx6g</jvm.argLine>
+            </properties>
+        </profile>
+    </profiles>
+
+    <modules>
+        <module>bom</module>
+        <module>validation-module-parent</module>
+        <module>validation-module-api</module>
+        <module>referencevalidator-lib</module>
+        <module>referencevalidator-cli</module>
+        <module>report-aggregate</module>
+    </modules>
+</project>
