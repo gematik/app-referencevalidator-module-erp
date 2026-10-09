@@ -1,0 +1,27 @@
+kbv.ita.erp-1.4.4.tgz:
+    - KBV_PR_ERP_Medication_PZN.json:
+        - renamed:
+          - Medication.extension:Kategorie.value[x]:valueCodeableConcept.coding as Medication.extension:Kategorie.value[x].coding
+          - Medication.extension:Kategorie.value[x]:valueCodeableConcept.coding.system as Medication.extension:Kategorie.value[x].coding.system
+          - Medication.extension:Kategorie.value[x]:valueCodeableConcept.coding.version as Medication.extension:Kategorie.value[x].coding.version
+          - Medication.extension:Kategorie.value[x]:valueCodeableConcept.coding.code as Medication.extension:Kategorie.value[x].coding.code
+          - Medication.extension:Kategorie.value[x]:valueCodeableConcept.coding.display as Medication.extension:Kategorie.value[x].coding.display
+          - Medication.extension:Kategorie.value[x]:valueCodeableConcept.coding.userSelected asMedication.extension:Kategorie.value[x].coding.userSelected
+        - removed:
+          - Medication.extension:Kategorie.valuevalueCodeableConcept
+          - Medication.extension:Normgroesse.valuevalueCode
+          - Medication.extension:Arzneimittelkategorie.valuevalueCoding
+          - Medication.extension:Impfstoff.valuevalueBoolean
+          - Medication.amount.numerator.extension:Packungsgroesse.valuevalueString
+          - Medication.ingredient.itemitemCodeableConcept.extension:data-absent-reason.valuevalueCode
+          - Medication.ingredient.strength.extension:data-absent-reason.valuevalueCode
+    - KBV_PR_ERP_Medication_Ingredient.json:
+        - removed:
+          - Medication.extension:Arzneimittelkategorie.valuevalueCoding
+          - Medication.extension:Arzneimittelkategorie.value[x]:valueCoding.system
+          - Medication.extension:Arzneimittelkategorie.value[x]:valueCoding.code
+          - Medication.extension:Impfstoff.valuevalueBoolean
+          - Medication.amount.numerator.extension:Packungsgroesse.valuevalueString
+        - renamed:
+          - Medication.extension:Arzneimittelkategorie.value[x]:valueCoding.system as Medication.extension:Arzneimittelkategorie.value[x].system
+          - Medication.extension:Arzneimittelkategorie.value[x]:valueCoding.code as Medication.extension:Arzneimittelkategorie.value[x].code

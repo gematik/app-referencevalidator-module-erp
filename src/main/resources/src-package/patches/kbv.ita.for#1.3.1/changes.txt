@@ -1,0 +1,25 @@
+kbv.ita.for-1.3.1.tgz:
+- in KBV_PR_FOR_Patient.json
+    - unified slicing block definitions
+        Patient.name:name.family.extension:namenszusatz.valuevalueString
+        Patient.name:name.family.extension:nachname.valuevalueString
+        Patient.name:name.family.extension:vorsatzwort.valuevalueString
+        Patient.name:name.prefix.extension:prefix-qualifier.valuevalueCode
+        Patient.birthDate.extension:data-absent-reason.valuevalueCode
+        Patient.address:Strassenanschrift.line.extension:Strasse.valuevalueString
+        Patient.address:Strassenanschrift.line.extension:Hausnummer.valuevalueString
+        Patient.address:Strassenanschrift.line.extension:Adresszusatz.valuevalueString
+        Patient.address:Postfach.line.extension:Postfach.valuevalueString
+
+- in KBV_PR_FOR_Practitioner.json
+    - unified slicing block definitions
+        Practitioner.name:name.family.extension:namenszusatz.valuevalueString
+        Practitioner.name:name.family.extension:nachname.valuevalueString
+        Practitioner.name:name.family.extension:vorsatzwort.valuevalueString
+        Practitioner.name:name.prefix.extension:prefix-qualifier.valuevalueCode
+
+- in KBV_PR_FOR_Organization.json
+	- unified slicing block definitions
+        Organization.address:Strassenanschrift.line.extension:Strasse.valuevalueString
+        Organization.address:Strassenanschrift.line.extension:Hausnummer.valuevalueString
+        Organization.address:Strassenanschrift.line.extension:Adresszusatz.valuevalueString
