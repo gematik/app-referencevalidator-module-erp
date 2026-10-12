@@ -32,8 +32,15 @@
 
 ## About
 
-This Validation Module defines the Implementation Guide for validating FHIR Resources in the e-Prescription (erp) Context. This Module is intended to be used with
-the [gematik Reference Validator](https://github.com/gematik/app-referencevalidator).
+This Validation Module defines the Implementation Guide for validating FHIR Resources in the e-Prescription (erp)
+Context. This Module is intended to be used with
+the [gematik Reference Validator](https://github.com/gematik/app-referencevalidator) and all packages include Snapshots.
+
+> [!WARNING]
+> The binding role of the Reference Validator's `e-Prescription` (`erp`) module in billing processes is defined
+in [Technical Annex 7, Annex 2, to the Medicinal Products Billing Agreement under Section 300 (3) of Book V of the German Social Code](https://www.gkv-datenaustausch.de/leistungserbringer/apotheken/apotheken.jsp).
+See
+also [E-prescription: technical processability, adjudicator role, and dispute resolution](docs/concept/concept.md#e-rezept-technische-verarbeitbarkeit-schiedsrichter-rolle-und-probleml%C3%B6sungsverfahren).
 
 ### Release notes
 
@@ -75,6 +82,28 @@ repository for usage instructions.
 `module.name` as `erp`
 
 See as an example the [`validator.config.yaml`](./validator.config.yaml) file in this repository.
+
+### Validation
+
+* The following `CodeSystem`s will not be validated:
+    - `http://fhir.de/CodeSystem/ifa/pzn`
+    - `http://fhir.de/CodeSystem/ask`
+    - `http://fhir.de/CodeSystem/bfarm/atc` (used in `GEM_ERP_PR_Medication` Profile)
+    - `http://snomed.info/sct` (used in `GEM_ERP_PR_Medication` Profile)
+    - `https://terminologieserver.bfarm.de/fhir/CodeSystem/arzneimittel-referenzdaten-pharmazeutisches-produkt` (used in
+      `GEM_ERP_PR_Medication` Profile)
+* The following `ValueSet`s will not be validated:
+    - `http://hl7.org/fhir/uv/ips/ValueSet/medicine-doseform` (used in `GEM_ERP_PR_Medication` Profile)
+* Instances with unknown Profiles result in a Validation Error
+* Instances with unknown Extensions result in a Validation Error
+* All the e-Prescription Resources (including the embedded ones) can only have a single `meta.profile` entry defined
+  (even when Profile may technically allow multiple entries)
+* Embedded Resources are only validated in the context of their containing Resource.
+
+> [!WARNING]
+> The e-Prescription module only validates FHIR instances for which a profile has been defined within the respective
+FHIR specifications. Some outputs from the e-Prescription service (e.g., collection bundles) for which no dedicated
+profile has been defined are not within the scope of validation. Therefore, these instances cannot be validated.
 
 ## License
 
