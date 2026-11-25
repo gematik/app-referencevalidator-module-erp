@@ -68,21 +68,21 @@ class ErpModuleExceptionsIT {
       strings = {
         // Profile without Version
         """
-                            <Bundle xmlns="http://hl7.org/fhir">
-                                <id value="fb16b9fb-eca9-4a64-b257-083ac87c9c9c"/>
-                                <meta>
-                                    <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle"/>
-                                   \s
-                                </meta>
-                            </Bundle>"""
+        <Bundle xmlns="http://hl7.org/fhir">
+            <id value="fb16b9fb-eca9-4a64-b257-083ac87c9c9c"/>
+            <meta>
+                <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle"/>
+               \s
+            </meta>
+        </Bundle>\
+        """
       })
   void testProfileWithoutVersionLeadsToDefault(String content) {
     final var fhirResource = FhirResource.fromXml(content);
     final var packagesToLoad =
-        Assertions.assertDoesNotThrow(
-            () ->
-                ValidatorSetup.detectPackagesToLoad(
-                    contextConfiguration, validationPackageSelector, fhirResource));
+        Assertions.assertDoesNotThrow(() ->
+            ValidatorSetup.detectPackagesToLoad(
+                contextConfiguration, validationPackageSelector, fhirResource));
     Assertions.assertFalse(packagesToLoad.isEmpty());
   }
 
@@ -91,18 +91,20 @@ class ErpModuleExceptionsIT {
       strings = {
         // No profile given
         """
-                            <Bundle xmlns="http://hl7.org/fhir">
-                              <id value="fb16b9fb-eca9-4a64-b257-083ac87c9c9c"/>
-                            </Bundle>""",
+        <Bundle xmlns="http://hl7.org/fhir">
+          <id value="fb16b9fb-eca9-4a64-b257-083ac87c9c9c"/>
+        </Bundle>\
+        """,
         // Unknown profile
         """
-                            <Bundle xmlns="http://hl7.org/fhir">
-                                <id value="fb16b9fb-eca9-4a64-b257-083ac87c9c9c"/>
-                                <meta>
-                                    <profile value="https://bla.bla|1.0.2"/>
-                                   \s
-                                </meta>
-                            </Bundle>"""
+        <Bundle xmlns="http://hl7.org/fhir">
+            <id value="fb16b9fb-eca9-4a64-b257-083ac87c9c9c"/>
+            <meta>
+                <profile value="https://bla.bla|1.0.2"/>
+               \s
+            </meta>
+        </Bundle>\
+        """
       })
   void testInvalidResourcesLeadToException(String content) {
     final var fhirResource = FhirResource.fromXml(content);

@@ -2,7 +2,7 @@ configSpecVersion: '3.0'
 name: erp
 author: 'gematik GmbH'
 description: 'Reference Validator Plugin for the electronic prescription (e-Rezept)'
-version: '3.0'
+version: '${project.version}'
 errorOnUnknownProfile: true
 anyExtensionsAllowed: false
 

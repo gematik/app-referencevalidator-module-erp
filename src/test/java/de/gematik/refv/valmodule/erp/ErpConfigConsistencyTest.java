@@ -67,24 +67,17 @@ class ErpConfigConsistencyTest {
 
       config
           .profileFamilies()
-          .forEach(
-              (groupName, group) ->
-                  Objects.requireNonNull(group.versions())
-                      .forEach(
-                          (version, binding) ->
-                              binding
-                                  .groups()
-                                  .forEach(
-                                      entry -> {
-                                        if (!knownComponents.contains(entry.packageGroupName())) {
-                                          dangling.add(
-                                              groupName
-                                                  + " / "
-                                                  + version
-                                                  + " -> "
-                                                  + entry.packageGroupName());
-                                        }
-                                      })));
+          .forEach((groupName, group) ->
+              Objects.requireNonNull(group.versions())
+                  .forEach((version, binding) ->
+                      binding
+                          .groups()
+                          .forEach(entry -> {
+                            if (!knownComponents.contains(entry.packageGroupName())) {
+                              dangling.add(
+                                  groupName + " / " + version + " -> " + entry.packageGroupName());
+                            }
+                          })));
 
       Assertions.assertTrue(
           dangling.isEmpty(),
@@ -100,15 +93,13 @@ class ErpConfigConsistencyTest {
 
       config
           .packageGroups()
-          .forEach(
-              (compName, def) ->
-                  Objects.requireNonNull(def.messageTransformations())
-                      .forEach(
-                          templateRef -> {
-                            if (!knownTemplates.contains(templateRef)) {
-                              dangling.add(compName + " -> " + templateRef);
-                            }
-                          }));
+          .forEach((compName, def) ->
+              Objects.requireNonNull(def.messageTransformations())
+                  .forEach(templateRef -> {
+                    if (!knownTemplates.contains(templateRef)) {
+                      dangling.add(compName + " -> " + templateRef);
+                    }
+                  }));
 
       Assertions.assertTrue(
           dangling.isEmpty(),
@@ -129,12 +120,11 @@ class ErpConfigConsistencyTest {
       final List<String> missing = new ArrayList<>();
       config
           .profileFamilies()
-          .forEach(
-              (name, def) -> {
-                if (def.versions() == null) {
-                  missing.add(name);
-                }
-              });
+          .forEach((name, def) -> {
+            if (def.versions() == null) {
+              missing.add(name);
+            }
+          });
       Assertions.assertTrue(
           missing.isEmpty(),
           "Components without validFrom cannot be indexed temporally:\n  "
@@ -146,29 +136,26 @@ class ErpConfigConsistencyTest {
       final List<String> invalid = new ArrayList<>();
       config
           .profileFamilies()
-          .forEach(
-              (name, versions) ->
-                  Objects.requireNonNull(versions.versions())
-                      .forEach(
-                          (s, profileVersion) ->
-                              profileVersion
-                                  .groups()
-                                  .forEach(
-                                      validityPeriod -> {
-                                        if (validityPeriod.validFrom() != null
-                                            && validityPeriod.validTill() != null
-                                            && validityPeriod
-                                                .validTill()
-                                                .isBefore(validityPeriod.validFrom())) {
-                                          invalid.add(
-                                              name
-                                                  + " ("
-                                                  + validityPeriod.validFrom()
-                                                  + " > "
-                                                  + validityPeriod.validTill()
-                                                  + ")");
-                                        }
-                                      })));
+          .forEach((name, versions) ->
+              Objects.requireNonNull(versions.versions())
+                  .forEach((s, profileVersion) ->
+                      profileVersion
+                          .groups()
+                          .forEach(validityPeriod -> {
+                            if (validityPeriod.validFrom() != null
+                                && validityPeriod.validTill() != null
+                                && validityPeriod
+                                    .validTill()
+                                    .isBefore(validityPeriod.validFrom())) {
+                              invalid.add(
+                                  name
+                                      + " ("
+                                      + validityPeriod.validFrom()
+                                      + " > "
+                                      + validityPeriod.validTill()
+                                      + ")");
+                            }
+                          })));
       Assertions.assertTrue(
           invalid.isEmpty(),
           "Components whose validTill is before validFrom:\n  " + String.join("\n  ", invalid));

@@ -138,10 +138,9 @@ public abstract class BaseProfileIntegrationTest {
       Assertions.assertEquals(
           isValidExpected,
           result.messages().stream()
-              .noneMatch(
-                  resultMessage ->
-                      IssueSeverity.ERROR.equals(resultMessage.severity())
-                          || IssueSeverity.FATAL.equals(resultMessage.severity())),
+              .noneMatch(resultMessage ->
+                  IssueSeverity.ERROR.equals(resultMessage.severity())
+                      || IssueSeverity.FATAL.equals(resultMessage.severity())),
           path + " failed:\n" + result);
     } catch (Exception e) {
       if (isValidExpected) {
