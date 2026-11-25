@@ -1,8 +1,8 @@
 <img align="right" width="250" alt="gematik GmbH" src="https://raw.githubusercontent.com/gematik/gematik.github.io/master/Gematik_Logo_Flag_With_Background.png" />
 
-# e-Prescription (erp) Validation Module
+# gematik Reference Validator
 
-[![Latest GitHub release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-erp?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-erp/releases) [![Maven Central](https://img.shields.io/maven-central/v/de.gematik.refv.valmodule/erp.svg)](https://search.maven.org/artifact/de.gematik.refv.valmodule/erp) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Latest GitHub release](https://img.shields.io/github/v/release/gematik/app-referencevalidator?label=release&logo=github)](https://github.com/gematik/app-referencevalidator/releases) [![Maven Central](https://img.shields.io/maven-central/v/de.gematik.refv/referencevalidator.svg)](https://search.maven.org/artifact/de.gematik.refv/referencevalidator) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 ## Contents
 
@@ -14,6 +14,9 @@
        <ul>
         <li><a href="#release-notes">Release Notes</a></li>
       </ul>     
+    </li>
+    <li>
+      <a href="#features">Features</a>
     </li>
     <li>
       <a href="#getting-started">Getting started</a>
@@ -30,11 +33,23 @@
   </ol>
 </details>
 
+For the German README, please follow this link: [README.de.md](README.de.md)
+
 ## About
 
-This Validation Module defines the Implementation Guide for validating FHIR Resources in the e-Prescription (erp)
-Context. This Module is intended to be used with
-the [gematik Reference Validator](https://github.com/gematik/app-referencevalidator) and all packages include Snapshots.
+The Reference Validator performs advanced validation of FHIR resources used by applications in Germany's Healthcare
+space, including the Telematikinfrastruktur (TI). It provides an authoritative assessment of data validity and can serve
+as a reference for other FHIR validators used in TI applications.
+
+See [Use cases, requirements, architecture, and development process](docs/concept/concept.md) for more information.
+
+> [!WARNING]
+> Users are responsible for operating the Reference Validator within their applications and system landscapes. gematik
+takes appropriate measures to support the security and performance of the Reference Validator but accepts no
+responsibility for damage arising from its integration into production systems. See the limitation of liability in
+the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). Users must assess the security of the complete
+system in light of the technical and organizational conditions of their operating environment. Performance also depends
+significantly on that environment.
 
 > [!WARNING]
 > The binding role of the Reference Validator's `e-Prescription` (`erp`) module in billing processes is defined
@@ -42,72 +57,140 @@ in [Technical Annex 7, Annex 2, to the Medicinal Products Billing Agreement unde
 See
 also [E-prescription: technical processability, adjudicator role, and dispute resolution](docs/concept/concept.md#e-rezept-technische-verarbeitbarkeit-schiedsrichter-rolle-und-probleml%C3%B6sungsverfahren).
 
+> [!WARNING]
+> The Reference Validator is not intended for checking KIM payloads in production environments (PU).
+
+> [!NOTE]
+> The binding status of other validation modules has not been established; gematik recommends their use.
+
 ### Release notes
 
-See the [Release Notes](ReleaseNotes.md) file for information about changes.
+See the [Release Notes file](ReleaseNotes.md) for information about changes.
+
+## Features
+
+- Validate FHIR resources against their referenced profiles.
+- Validation coverage follows the [HL7 Java validator](https://www.hl7.org/fhir/validation.html), including:
+    - **Structure:** Every instance element must be defined by the referenced profile.
+    - **Cardinality:** Minimum and maximum cardinalities are enforced.
+    - **Value domains:** Property value domains, including enumerated codes, are checked.
+    - **Coding and CodeableConcept bindings:** Instance codes are checked against the code-system definitions in the
+      profile.
+    - **Constraints and invariants:** Rules defined for profile properties are enforced.
+- Check the validity periods of profiles referenced by instances.
+- Select FHIR package dependencies based on the instance creation date, for example,
+  date-dependent [KBV code tables](https://applications.kbv.de/overview.xhtml).
+
+### Validation modules
+
+Starting with Version 3.0, the Validation Modules `erp`, `eau` and the experimental `erpta7` aren't shipped together
+with the main validator CLI application. Only core definitions for FHIR R4 and R5 are included.
+
+Modules have their own Repository and they can be loaded at runtime, by storing them on the filesystem and passing to
+the CLI as arguments the path to the folder containing the plugins and the desired module name of the desired plugin.
+It is not possible to load multiple plugins at the same time within a single execution of the application.
+
+See the [Module User Guide](./docs/user-guide/module-user-guide.md) for more information about developing your own
+validation module.
+
+| Validation Module  | Description                                  | Release                                                                                                                                                                                                                               |
+|--------------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| diga               | DiGA Toolkit                                 | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-diga?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-diga/releases)                             |
+| eau                | elektronische Arbeitsunfähigkeit             | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-eau?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-eau/releases)                               |
+| eeb                | VSDM-Ersatzbescheinigung                     | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-eeb?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-eeb/releases)                               |
+| epa-mhd            | Elektronische Patientenakte MHD Service      | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-epa-mhd?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-epa-mhd/releases)                       |
+| epa3-basic         | Elektronische Patientenakte Medication       | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-epa3-basic?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-epa3-basic/releases)                 |
+| epa3-medication    | Elektronische Patientenakte Medication       | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-epa3-medication?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-epa3-medication/releases)       |
+| erp                | Elektronische Rezept                         | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-erp?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-erp/releases)                               |
+| erp-eu             | Elektronische Rezept für die EU              | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-erp-eu?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-erp-eu/releases)                         |
+| erp-servicerequest | KIM-Nachrichten für das E-Rezept             | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-erp-servicerequest?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-erp-servicerequest/releases) |
+| erpta7             | E-Rezept Abrechnungsdaten                    | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-erpta7?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-erpta7/releases)                         |
+| evp                | Elektronischer Versorgungsplan Pflege        | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-evp?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-evp/releases)                               |
+| hddt               | Health Data Transfer from Devices            | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-hddt?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-hddt/releases)                             |
+| isik5              | Informationssystem für Krankenhäuser Stufe 5 | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-isik5?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-isik5/releases)                           |
+| isik6              | Informationssystem für Krankenhäuser Stufe 6 | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-isik6?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-isik6/releases)                           |
+| vsdm2              | VSDM 2                                       | [![Latest release](https://img.shields.io/github/v/release/gematik/app-referencevalidator-module-vsdm2?label=release&logo=github)](https://github.com/gematik/app-referencevalidator-module-vsdm2/releases)                           |
+
+> [!WARNING]
+> The Validation Modules available
+> at [app-referencevalidator-plugins repository](https://github.com/gematik/app-referencevalidator-plugins/releases)
+> aren't incompatible with the
+> version 3.0 of the Validator, due to internal format changes and snapshot generation process.
 
 ## Getting started
 
 ### Prerequisites
 
-In order to build the Validation Module, you need the following tools and frameworks:
+The Reference Validator is distributed as a Java library and a command-line application.
+
+The following tools are required for building this project:
 
 * Java JDK 25 or later
 * Apache Maven 3.9+
-* gematik Reference Validator 3.0.0+ (automatically downloaded through Maven)
-
-Additionally, you need internet access, to fetch the FHIR Implementation Guide for ISiK from the official FHIR registry.
 
 ### Installation
 
-You can build the Validation Module with the following command:
+#### Command-line application
 
+Download `referencevalidator-cli-X.Y.Z.jar` from
+the [GitHub releases](https://github.com/gematik/app-referencevalidator/releases) and place it in a directory of your
+choice.
+
+#### Java library
+
+The Reference Validator is published
+to [Maven Central](https://search.maven.org/artifact/de.gematik.refv/referencevalidator). Add the library to your
+project:
+
+```xml
+
+<dependency>
+    <groupId>de.gematik.refv</groupId>
+    <artifactId>referencevalidator-lib</artifactId>
+    <version>${version.referencevalidator}</version>
+</dependency>
 ```
-mvn clean install
-```
 
-The result will be a .JAR File located in the `target` directory, which can be used with the gematik Reference Validator
-to validate FHIR Resources.
+Replace `${version.referencevalidator}` with the version to use.
 
-If you don't want to build the Validation Module yourself, you can download the latest version directly from
-the [GitHub Release page](https://github.com/gematik/app-referencevalidator-module-erp/releases).
+> [!WARNING]
+> Use the dependency versions specified by the Reference Validator Bill-of-Material (BOM), particularly for HL7 Core
+> (`ca.uhn.hapi.fhir`).
+> Different runtime versions may produce different or unexpected validation results.
 
 ## Usage
 
-Follow the documentation at the [gematik Reference Validator](https://github.com/gematik/app-referencevalidator)
-repository for usage instructions.
+### Command Line
 
-> [!NOTE]
-> You need to define the `module-name` parameter or, in the configuration YAML file, you need to set the key
-`module.name` as `erp`
+See the [Command-Line Documentation](./docs/user-guide/cli-user-guide.md) for usage instructions.
 
-See as an example the [`validator.config.yaml`](./validator.config.yaml) file in this repository.
+#### Using plugins with the command-line application
 
-### Validation
+Place plugin `.jar` files in a `plugins` directory or another configured directory. Pass its path using
+`--modules-folder`, then select a module with `--module-name`, or, alternatively, configure the parameters in the YAML
+configuration.
 
-* The following `CodeSystem`s will not be validated:
-    - `http://fhir.de/CodeSystem/ifa/pzn`
-    - `http://fhir.de/CodeSystem/ask`
-    - `http://fhir.de/CodeSystem/bfarm/atc` (used in `GEM_ERP_PR_Medication` Profile)
-    - `http://snomed.info/sct` (used in `GEM_ERP_PR_Medication` Profile)
-    - `https://terminologieserver.bfarm.de/fhir/CodeSystem/arzneimittel-referenzdaten-pharmazeutisches-produkt` (used in
-      `GEM_ERP_PR_Medication` Profile)
-* The following `ValueSet`s will not be validated:
-    - `http://hl7.org/fhir/uv/ips/ValueSet/medicine-doseform` (used in `GEM_ERP_PR_Medication` Profile)
-* Instances with unknown Profiles result in a Validation Error
-* Instances with unknown Extensions result in a Validation Error
-* All the e-Prescription Resources (including the embedded ones) can only have a single `meta.profile` entry defined
-  (even when Profile may technically allow multiple entries)
-* Embedded Resources are only validated in the context of their containing Resource.
+Example directory layout:
 
-> [!WARNING]
-> The e-Prescription module only validates FHIR instances for which a profile has been defined within the respective
-FHIR specifications. Some outputs from the e-Prescription service (e.g., collection bundles) for which no dedicated
-profile has been defined are not within the scope of validation. Therefore, these instances cannot be validated.
+```text
+referencevalidator/
+├── plugins/
+│   └── valmodule-erp-3.0.0.jar
+├── referencevalidator-cli-X.Y.Z.jar
+└── test-bundle.xml
+```
+
+### Java library
+
+See the [Library Documentation](./docs/user-guide/library-user-guide.md) for usage instructions.
+
+## Contributing
+
+If you want to contribute, please check our [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## License
 
-Copyright 2026 gematik GmbH
+Copyright 2022-2026 gematik GmbH
 
 Apache License, Version 2.0
 
@@ -152,3 +235,5 @@ the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 For questions, suggestions, bug reports, or feature requests,
 use [GitHub Issues](https://github.com/gematik/app-referencevalidator/issues) or
 email [referenzvalidator@gematik.de](mailto:referenzvalidator@gematik.de).
+
+
