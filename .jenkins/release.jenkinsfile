@@ -1,0 +1,20 @@
+@Library('gematik-jenkins-shared-library') _
+
+pipelineRelease(
+  // Required Parameters
+  ARTIFACT_NAME             : 'valmodule-erp',
+  BUILD_TYPE                : 'maven',
+  GITLAB_PROJECT_ID         : 2438,
+  JIRA_PROJECT_ID           : 'REFV',
+  JIRA_VERSION_PATTERN      : '^valmodule-erp-([0-9]){1,2}\\.([0-9]){1,2}\\.([0-9]){1,2}.*$',
+  // Override optionals
+  ARTIFACT_TYPE             : 'library',
+  DEFAULT_BRANCH_NAME       : 'main',
+  DOWNSTREAM_JOB            : 'Referenzvalidator-Validation_Modules-OneClick_Release',
+  EMAIL_RECIPIENTS          : getDataEMailList(),
+  ENABLE_OSPO_CHECKS        : true,
+  ENABLE_BUILD_DOCKER_IMAGE : false,
+  ENABLE_PUSH_TO_NEXUS      : true,
+  JAVA_VERSION              : 25,
+  JENKINS_AGENT             : 'k8-backend-medium'
+)

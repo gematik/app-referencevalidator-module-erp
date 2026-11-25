@@ -21,7 +21,7 @@ context:
     exampleCodeSystemsUsagePolicy: "DISALLOWED"
     exampleUrlsUsagePolicy: "ALLOWED"
     exampleRestReferencesPolicy: "ALLOWED"
-    recursiveModePolicy: "DISALLOWED"
+    recursiveModePolicy: "ALLOWED"
     anyExtensionPolicy: "ALLOWED"
 module:
   directory: "./target"

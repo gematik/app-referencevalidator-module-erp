@@ -72,12 +72,11 @@ public final class ValidatorSetup {
             ValidationOptions.defaultConfiguration()));
     // Translate all the tgz coordinate packages into remote ones (they are already in cache)
     return packagesToLoad.stream()
-        .map(
-            s ->
-                s.contains(LocalArchive.PACKAGE_SEPARATOR)
-                        && s.endsWith(LocalArchive.ARCHIVE_PACKAGE_EXTENSION)
-                    ? LocalArchive.parse(s).coordinates()
-                    : s)
+        .map(s ->
+            s.contains(LocalArchive.PACKAGE_SEPARATOR)
+                    && s.endsWith(LocalArchive.ARCHIVE_PACKAGE_EXTENSION)
+                ? LocalArchive.parse(s).coordinates()
+                : s)
         .toList();
   }
 
@@ -95,12 +94,11 @@ public final class ValidatorSetup {
             ValidationOptions.defaultConfiguration()));
     // Translate all the tgz coordinate packages into remote ones (they are already in cache)
     return packagesToLoad.stream()
-        .map(
-            s ->
-                s.contains(LocalArchive.PACKAGE_SEPARATOR)
-                        && s.endsWith(LocalArchive.ARCHIVE_PACKAGE_EXTENSION)
-                    ? LocalArchive.parse(s).coordinates()
-                    : s)
+        .map(s ->
+            s.contains(LocalArchive.PACKAGE_SEPARATOR)
+                    && s.endsWith(LocalArchive.ARCHIVE_PACKAGE_EXTENSION)
+                ? LocalArchive.parse(s).coordinates()
+                : s)
         .toList();
   }
 
