@@ -3,7 +3,7 @@
 pipelineMultibranchMavenCi(
   // Required
   ARTIFACT_NAME             : 'valmodule-erp',
-  GITLAB_PROJECT_ID         : 2438,
+  GITLAB_PROJECT_ID         : 2430,
   JIRA_PROJECT_ID           : 'REFV',
   JIRA_VERSION_PATTERN      : '^valmodule-erp-([0-9]){1,2}\\.([0-9]){1,2}\\.([0-9]){1,2}$',
   // Override optionals
